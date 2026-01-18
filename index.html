@@ -2,164 +2,155 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>美少女記帳本</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { 
-            --bright-pink: #daa4a4; 
-            --hover-pink: #daa4a4;
-            --text-gray: #444;
-        }
+        :root { --bright-pink: #daa4a4; --hover-pink: #daa4a4; --text-gray: #444; }
+        
         body { 
             background-color: #FFFFFF; 
+            background-size: cover; 
+            background-position: center; 
+            background-attachment: fixed; /* 手機版背景固定不捲動 */
             font-family: "Microsoft JhengHei", sans-serif; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            padding: 30px; /* 維持四周間距 */
+            padding: 15px; 
             color: var(--text-gray); 
+            margin: 0;
+            min-height: 100vh;
         }
 
-        /* 大標題：上下各空出一行的空間 */
-        h1 { 
-            color: var(--bright-pink); 
-            font-size: 2.2rem; 
-            margin-top: 40px;    /* 標題上方空一行 */
-            margin-bottom: 40px; /* 標題下方空一行 */
-        }
-        
-        .info-bar {
-            width: 100%;
-            max-width: 550px;
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--bright-pink);
-            font-weight: bold;
-        }
-        .info-total { font-size: 1.2rem; display: block; }
-
+        /* 縮小後的白色框框 */
         .card { 
-            background: white; 
-            padding: 25px; 
+            background: rgba(255, 255, 255, 0.92); 
+            padding: 20px 15px; 
             border: 1px solid #f0f0f0;
             border-radius: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
             width: 100%; 
-            max-width: 550px; 
-            text-align: center; 
+            max-width: 700px; /* 從 900 縮小到 700 */
+            box-sizing: border-box;
+            text-align: center;
         }
 
-        .input-row { margin-bottom: 10px; }
-        .full-width { width: 90% !important; max-width: 300px; }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        /* 粉紅框標題 */
+        .title-box {
+            background-color: var(--bright-pink);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            margin-bottom: 30px; /* 下方多留一行空間 */
         }
-        input[type=number] { -moz-appearance: textfield; }
+        h1 { font-size: 1.8rem; margin: 0; color: white; }
+
+        .info-bar { margin-bottom: 20px; color: var(--bright-pink); font-weight: bold; }
+        .info-total { font-size: 1.1rem; display: block; }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
 
         input, select { 
-            padding: 12px; 
+            padding: 10px; 
             border: 2px solid var(--bright-pink); 
             border-radius: 10px; 
-            margin: 5px; 
-            width: 140px; 
             outline: none; 
-            font-size: 1rem;
+            font-size: 0.95rem;
+            flex: 1; 
+            min-width: 110px; 
+            box-sizing: border-box;
         }
 
         button { 
             background-color: var(--bright-pink); 
             color: white; 
             border: none; 
-            padding: 12px 25px; 
+            padding: 10px 20px; 
             border-radius: 10px; 
             cursor: pointer; 
             font-weight: bold; 
-            transition: 0.3s; 
-            margin: 5px;
-            font-size: 1.1rem; 
+            font-size: 1rem; 
+            white-space: nowrap;
         }
-        button:hover { background-color: var(--hover-pink); }
 
         .category-manage { margin-top: 15px; }
-        .total-info { font-size: 1.4rem; color: var(--hover-pink); font-weight: bold; margin: 20px 0; }
-        #chartBox { display: none; margin-top: 10px; }
+        .category-manage input { flex: none; width: 110px; font-size: 0.8rem; }
+        .category-manage button { font-size: 0.85rem; padding: 6px 12px; }
+
+        #chartBox { display: none; margin-top: 10px; width: 100%; }
         
         .backup-section {
             margin-top: 25px;
             padding-top: 15px;
             border-top: 1px dashed #eee;
         }
-        .backup-btn { background-color: #aaa; font-size: 0.9rem; padding: 8px 15px; }
-        .backup-text { font-size: 1rem; color: #bbb; margin-bottom: 10px; }
+        .backup-btn { background-color: #aaa; font-size: 0.85rem; padding: 6px 12px; }
+        .backup-text { font-size: 1rem; color: #bbb; margin-bottom: 8px; }
 
-        .photo-section {
-            margin-top: 20px;
-            padding: 15px;
-            border: 2px dashed #eee;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        #previewImg {
-            max-width: 100%;
-            border-radius: 15px;
-            margin-top: 10px;
-            display: none;
-        }
-        .upload-btn { background-color: #eee; color: #888; font-size: 0.8rem; padding: 5px 10px; }
+        /* 背景設定按鈕區 */
+        .bg-settings { margin-top: 20px; }
+        .bg-btn { background: #eee; color: #888; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <h1>美少女記帳本👸🏻</h1>
-
-    <div class="info-bar">
-        <span id="monthTotalLabel" class="info-total">當月總計: $0</span>
-    </div>
-
     <div class="card">
-        <div class="input-row">
-            <input type="date" id="recordDate" class="full-width">
+        <div class="title-box">
+            <h1>美少女記帳本👸🏻</h1>
         </div>
-        <div class="input-row">
-            <input type="number" id="amount" placeholder="輸入金額" step="any">
+
+        <div class="info-bar">
+            <span id="monthTotalLabel" class="info-total">當月總計: $0</span>
+        </div>
+
+        <div class="input-group">
+            <input type="date" id="recordDate">
+            <input type="number" id="amount" placeholder="金額" step="any">
             <select id="categorySelect"></select>
             <button onclick="addRecord()">新增紀錄</button>
         </div>
 
         <div class="category-manage">
-            <input type="text" id="newCategoryName" placeholder="新類別名稱" style="width: 100px; padding: 8px; font-size: 0.8rem;">
-            <button onclick="addCategory()" style="padding: 8px 15px; font-size: 0.9rem;">新增類別</button>
-            <button onclick="deleteCategory()" style="background: #daa4a4; padding: 8px 15px; font-size: 0.9rem;">刪除類別</button>
+            <input type="text" id="newCategoryName" placeholder="新類別">
+            <button onclick="addCategory()">新增類別</button>
+            <button onclick="deleteCategory()" style="background: #daa4a4;">刪除類別</button>
         </div>
 
-        <hr style="border:0; border-top: 1px solid #eee; margin: 15px 0;">
+        <hr style="border:0; border-top: 1px solid #eee; margin: 20px 0;">
 
-        <button onclick="showStats('month')">當月總計</button>
-        <button onclick="showStats('year')">今年總計</button>
+        <div>
+            <button onclick="showStats('month')">當月圖表</button>
+            <button onclick="showStats('year')">今年圖表</button>
+        </div>
 
         <div id="chartBox">
-            <div id="summaryLabel" class="total-info"></div>
+            <div id="summaryLabel" style="font-size:1.2rem; color:var(--bright-pink); font-weight:bold; margin:15px;"></div>
             <canvas id="myChart"></canvas>
         </div>
 
         <div class="backup-section">
             <p class="backup-text">🔒記得備份</p>
-            <button class="backup-btn" onclick="exportData()">下載紀錄備份</button>
-            <button class="backup-btn" onclick="document.getElementById('fileInput').click()">匯入備份檔案</button>
+            <button class="backup-btn" onclick="exportData()">下載備份</button>
+            <button class="backup-btn" onclick="document.getElementById('fileInput').click()">匯入備份</button>
             <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
         </div>
-    </div>
 
-    <div class="photo-section">
-        <span style="color:#aaa; font-size: 0.9rem;">✨</span><br>
-        <button class="upload-btn" onclick="document.getElementById('photoInput').click()">點擊新增/更換照片</button>
-        <input type="file" id="photoInput" style="display:none" accept="image/*" onchange="uploadPhoto(event)">
-        <img id="previewImg" src="" alt="照片預覽">
+        <div class="bg-settings">
+            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景照片</button>
+            <button class="bg-btn" onclick="clearBg()" style="margin-left:5px;">重置背景</button>
+            <input type="file" id="bgInput" style="display:none" accept="image/*" onchange="uploadBg(event)">
+        </div>
     </div>
 
     <script>
@@ -170,134 +161,82 @@
         function initHeader() {
             const now = new Date();
             document.getElementById('recordDate').valueAsDate = now;
-
             const monthTotal = records.reduce((sum, r) => {
                 const rDate = new Date(r.date);
                 if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) return sum + r.amt;
                 return sum;
             }, 0);
             document.getElementById('monthTotalLabel').innerText = `當月總計: $${monthTotal}`;
-
-            const savedImg = localStorage.getItem('girl_photo');
-            if (savedImg) {
-                const img = document.getElementById('previewImg');
-                img.src = savedImg;
-                img.style.display = 'inline-block';
-            }
+            
+            // 載入背景
+            const savedBg = localStorage.getItem('girl_custom_bg');
+            if (savedBg) { document.body.style.backgroundImage = `url(${savedBg})`; }
         }
 
-        function uploadPhoto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function uploadBg(event) {
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const imgData = e.target.result;
-                localStorage.setItem('girl_photo', imgData);
-                const img = document.getElementById('previewImg');
-                img.src = imgData;
-                img.style.display = 'inline-block';
+                localStorage.setItem('girl_custom_bg', imgData);
+                document.body.style.backgroundImage = `url(${imgData})`;
             };
             reader.readAsDataURL(file);
         }
 
+        function clearBg() { localStorage.removeItem('girl_custom_bg'); location.reload(); }
+
         function updateCategoryDropdown() {
-            const select = document.getElementById('categorySelect');
-            select.innerHTML = '';
-            categories.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = cat;
-                opt.innerText = cat;
-                select.appendChild(opt);
-            });
+            const select = document.getElementById('categorySelect'); select.innerHTML = '';
+            categories.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; select.appendChild(opt); });
         }
 
         function addCategory() {
             const name = document.getElementById('newCategoryName').value.trim();
-            if(!name) return;
-            if(categories.includes(name)) return alert("這類別已經有了喔！");
-            categories.push(name);
-            localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
-            document.getElementById('newCategoryName').value = '';
+            if(!name || categories.includes(name)) return;
+            categories.push(name); localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
             updateCategoryDropdown();
         }
 
         function deleteCategory() {
-            const select = document.getElementById('categorySelect');
-            const selectedCat = select.value;
-            if(!selectedCat) return;
-            if(confirm(`確定要刪除「${selectedCat}」類別嗎？`)) {
-                categories = categories.filter(c => c !== selectedCat);
-                localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
-                updateCategoryDropdown();
-            }
+            const selectedCat = document.getElementById('categorySelect').value;
+            if(!selectedCat || !confirm(`刪除「${selectedCat}」？`)) return;
+            categories = categories.filter(c => c !== selectedCat); localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
+            updateCategoryDropdown();
         }
 
         function addRecord() {
-            const amt = document.getElementById('amount').value;
-            const cat = document.getElementById('categorySelect').value;
-            const date = document.getElementById('recordDate').value;
+            const amt = document.getElementById('amount').value; const cat = document.getElementById('categorySelect').value; const date = document.getElementById('recordDate').value;
             if(!amt || !cat || !date) return alert("請填入資料！");
-
             records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString() });
             localStorage.setItem('girl_records_v3', JSON.stringify(records));
-            document.getElementById('amount').value = '';
-            alert("記好囉！✨");
-            initHeader();
+            document.getElementById('amount').value = ''; initHeader(); alert("記好囉！✨");
         }
 
         function showStats(type) {
             document.getElementById('chartBox').style.display = 'block';
             const now = new Date();
-            const filtered = records.filter(r => {
-                const d = new Date(r.date);
-                return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear());
-            });
-            let total = 0;
-            const stats = {};
-            filtered.forEach(r => {
-                total += r.amt;
-                stats[r.cat] = (stats[r.cat] || 0) + r.amt;
-            });
+            const filtered = records.filter(r => { const d = new Date(r.date); return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); });
+            let total = 0; const stats = {};
+            filtered.forEach(r => { total += r.amt; stats[r.cat] = (stats[r.cat] || 0) + r.amt; });
             document.getElementById('summaryLabel').innerText = (type === 'month' ? "本月" : "今年") + "支出：$" + total;
             if(myChart) myChart.destroy();
-            myChart = new Chart(document.getElementById('myChart'), {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(stats),
-                    datasets: [{ data: Object.values(stats), backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] }]
-                }
-            });
+            myChart = new Chart(document.getElementById('myChart'), { type: 'pie', data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] }] } });
         }
 
         function exportData() {
-            if(records.length === 0) return alert("沒有紀錄喔！");
-            const data = { records, categories };
-            const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `備份_${new Date().toLocaleDateString()}.json`;
-            a.click();
+            const data = { records, categories }; const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "備份.json"; a.click();
         }
 
         function importData(e) {
-            const file = e.target.files[0];
-            if(!file) return;
+            const file = e.target.files[0]; if(!file) return;
             const reader = new FileReader();
-            reader.onload = function(evt) {
-                const imported = JSON.parse(evt.target.result);
-                records = imported.records || [];
-                categories = imported.categories || [];
-                localStorage.setItem('girl_records_v3', JSON.stringify(records));
-                localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
-                alert("匯入成功！💖");
-                location.reload();
-            };
+            reader.onload = function(evt) { const imported = JSON.parse(evt.target.result); records = imported.records || []; categories = imported.categories || []; localStorage.setItem('girl_records_v3', JSON.stringify(records)); localStorage.setItem('girl_cats_v3', JSON.stringify(categories)); location.reload(); };
             reader.readAsText(file);
         }
 
-        updateCategoryDropdown();
-        initHeader();
+        updateCategoryDropdown(); initHeader();
     </script>
 </body>
 </html>
