@@ -12,52 +12,55 @@
             background-color: #FFFFFF; 
             background-size: cover; 
             background-position: center; 
-            background-attachment: fixed; /* 手機版背景固定不捲動 */
+            background-attachment: fixed;
             font-family: "Microsoft JhengHei", sans-serif; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            padding: 15px; 
+            justify-content: center; /* 讓框框置中 */
+            padding: 20px; 
             color: var(--text-gray); 
             margin: 0;
-            min-height: 100vh;
+            height: 100vh; /* 固定視窗高度 */
+            overflow: hidden; /* 防止背景亂動 */
         }
 
-        /* 縮小後的白色框框 */
+        /* 調整後的白色大框框 */
         .card { 
             background: rgba(255, 255, 255, 0.92); 
-            padding: 20px 15px; 
+            padding: 20px; 
             border: 1px solid #f0f0f0;
             border-radius: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            width: 100%; 
-            max-width: 700px; /* 從 900 縮小到 700 */
+            width: 95%; /* 橫向接近滿版 */
+            max-width: 700px; 
+            max-height: 65vh; /* 直向高度佔螢幕 65%，不讓它滿版 */
+            overflow-y: auto; /* 內容太多時可以在框內捲動 */
             box-sizing: border-box;
             text-align: center;
         }
 
-        /* 粉紅框標題 */
+        /* 隱藏捲軸但保留功能 (美觀用) */
+        .card::-webkit-scrollbar { width: 0; }
+
         .title-box {
             background-color: var(--bright-pink);
             color: white;
             padding: 10px 20px;
             border-radius: 12px;
             display: inline-block;
-            margin-top: 10px;
-            margin-bottom: 30px; /* 下方多留一行空間 */
+            margin-bottom: 20px;
         }
-        h1 { font-size: 1.8rem; margin: 0; color: white; }
+        h1 { font-size: 1.6rem; margin: 0; color: white; }
 
-        .info-bar { margin-bottom: 20px; color: var(--bright-pink); font-weight: bold; }
-        .info-total { font-size: 1.1rem; display: block; }
+        .info-bar { margin-bottom: 15px; color: var(--bright-pink); font-weight: bold; }
+        .info-total { font-size: 1.1rem; }
 
         .input-group {
             display: flex;
             flex-wrap: wrap; 
             justify-content: center;
-            align-items: center;
             gap: 8px;
-            width: 100%;
             margin-bottom: 12px;
         }
 
@@ -68,8 +71,7 @@
             outline: none; 
             font-size: 0.95rem;
             flex: 1; 
-            min-width: 110px; 
-            box-sizing: border-box;
+            min-width: 100px; 
         }
 
         button { 
@@ -81,26 +83,22 @@
             cursor: pointer; 
             font-weight: bold; 
             font-size: 1rem; 
-            white-space: nowrap;
         }
 
-        .category-manage { margin-top: 15px; }
-        .category-manage input { flex: none; width: 110px; font-size: 0.8rem; }
-        .category-manage button { font-size: 0.85rem; padding: 6px 12px; }
+        .category-manage { margin-top: 15px; font-size: 0.8rem; }
+        .category-manage input { width: 100px; }
 
-        #chartBox { display: none; margin-top: 10px; width: 100%; }
+        #chartBox { margin-top: 10px; width: 100%; }
         
         .backup-section {
             margin-top: 25px;
             padding-top: 15px;
             border-top: 1px dashed #eee;
         }
-        .backup-btn { background-color: #aaa; font-size: 0.85rem; padding: 6px 12px; }
-        .backup-text { font-size: 1rem; color: #bbb; margin-bottom: 8px; }
+        .backup-btn { background-color: #aaa; font-size: 0.8rem; padding: 6px 12px; }
 
-        /* 背景設定按鈕區 */
         .bg-settings { margin-top: 20px; }
-        .bg-btn { background: #eee; color: #888; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.75rem; cursor: pointer; }
+        .bg-btn { background: #eee; color: #888; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -123,8 +121,8 @@
 
         <div class="category-manage">
             <input type="text" id="newCategoryName" placeholder="新類別">
-            <button onclick="addCategory()">新增類別</button>
-            <button onclick="deleteCategory()" style="background: #daa4a4;">刪除類別</button>
+            <button onclick="addCategory()">新增</button>
+            <button onclick="deleteCategory()" style="background: #daa4a4;">刪除</button>
         </div>
 
         <hr style="border:0; border-top: 1px solid #eee; margin: 20px 0;">
@@ -135,20 +133,20 @@
         </div>
 
         <div id="chartBox">
-            <div id="summaryLabel" style="font-size:1.2rem; color:var(--bright-pink); font-weight:bold; margin:15px;"></div>
+            <div id="summaryLabel" style="font-size:1.1rem; color:var(--bright-pink); font-weight:bold; margin:10px;"></div>
             <canvas id="myChart"></canvas>
         </div>
 
         <div class="backup-section">
-            <p class="backup-text">🔒記得備份</p>
+            <p style="font-size: 0.9rem; color: #bbb; margin-bottom: 5px;">🔒定期備份</p>
             <button class="backup-btn" onclick="exportData()">下載備份</button>
             <button class="backup-btn" onclick="document.getElementById('fileInput').click()">匯入備份</button>
             <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
         </div>
 
         <div class="bg-settings">
-            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景照片</button>
-            <button class="bg-btn" onclick="clearBg()" style="margin-left:5px;">重置背景</button>
+            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景</button>
+            <button class="bg-btn" onclick="clearBg()">重置背景</button>
             <input type="file" id="bgInput" style="display:none" accept="image/*" onchange="uploadBg(event)">
         </div>
     </div>
@@ -167,8 +165,6 @@
                 return sum;
             }, 0);
             document.getElementById('monthTotalLabel').innerText = `當月總計: $${monthTotal}`;
-            
-            // 載入背景
             const savedBg = localStorage.getItem('girl_custom_bg');
             if (savedBg) { document.body.style.backgroundImage = `url(${savedBg})`; }
         }
@@ -177,9 +173,8 @@
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                const imgData = e.target.result;
-                localStorage.setItem('girl_custom_bg', imgData);
-                document.body.style.backgroundImage = `url(${imgData})`;
+                localStorage.setItem('girl_custom_bg', e.target.result);
+                document.body.style.backgroundImage = `url(${e.target.result})`;
             };
             reader.readAsDataURL(file);
         }
