@@ -9,10 +9,10 @@
         :root { --bright-pink: #daa4a4; --hover-pink: #daa4a4; --text-gray: #444; }
         
         body { 
-            background-color: #000000; /* 背景底色改黑色，沒照片的地方比較不突兀 */
-            background-size: contain; /* 確保 9:16 照片完整顯示不裁切 */
+            background-color: #FFFFFF; 
+            background-size: cover; 
             background-position: center; 
-            background-repeat: no-repeat; /* 防止照片重複出現 */
+            background-repeat: no-repeat;
             background-attachment: fixed;
             font-family: "Microsoft JhengHei", sans-serif; 
             display: flex; 
@@ -26,31 +26,32 @@
             overflow: hidden;
         }
 
-        /* 小巧、半透明、偏上的框框 */
         .card { 
             background: rgba(255, 255, 255, 0.7); 
-            padding: 15px; 
+            padding: 20px 15px; 
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
             width: 92%; 
             max-width: 450px; 
-            max-height: 50vh; /* 高度再縮一點點，留更多空間看圖 */
+            max-height: 52vh; 
             overflow-y: auto;
             box-sizing: border-box;
             text-align: center;
             backdrop-filter: blur(3px);
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .card::-webkit-scrollbar { width: 0; }
 
+        /* 標題粉紅框：上方增加了 margin-top 來空出一行 */
         .title-box {
             background-color: var(--bright-pink);
             color: white;
             padding: 6px 15px;
             border-radius: 10px;
             display: inline-block;
+            margin-top: 20px; /* 這裡增加空間 */
             margin-bottom: 12px;
         }
         h1 { font-size: 1.3rem; margin: 0; color: white; }
@@ -147,7 +148,7 @@
         </div>
 
         <div class="bg-settings">
-            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換完整背景</button>
+            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景</button>
             <button class="bg-btn" onclick="clearBg()">重置</button>
             <input type="file" id="bgInput" style="display:none" accept="image/*" onchange="uploadBg(event)">
         </div>
