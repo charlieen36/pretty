@@ -9,96 +9,99 @@
         :root { --bright-pink: #daa4a4; --hover-pink: #daa4a4; --text-gray: #444; }
         
         body { 
-            background-color: #FFFFFF; 
-            background-size: cover; 
+            background-color: #000000; /* 背景底色改黑色，沒照片的地方比較不突兀 */
+            background-size: contain; /* 確保 9:16 照片完整顯示不裁切 */
             background-position: center; 
+            background-repeat: no-repeat; /* 防止照片重複出現 */
             background-attachment: fixed;
             font-family: "Microsoft JhengHei", sans-serif; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; /* 讓框框置中 */
+            justify-content: flex-start; 
             padding: 20px; 
             color: var(--text-gray); 
             margin: 0;
-            height: 100vh; /* 固定視窗高度 */
-            overflow: hidden; /* 防止背景亂動 */
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* 調整後的白色大框框 */
+        /* 小巧、半透明、偏上的框框 */
         .card { 
-            background: rgba(255, 255, 255, 0.92); 
-            padding: 20px; 
-            border: 1px solid #f0f0f0;
+            background: rgba(255, 255, 255, 0.7); 
+            padding: 15px; 
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            width: 95%; /* 橫向接近滿版 */
-            max-width: 700px; 
-            max-height: 65vh; /* 直向高度佔螢幕 65%，不讓它滿版 */
-            overflow-y: auto; /* 內容太多時可以在框內捲動 */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            width: 92%; 
+            max-width: 450px; 
+            max-height: 50vh; /* 高度再縮一點點，留更多空間看圖 */
+            overflow-y: auto;
             box-sizing: border-box;
             text-align: center;
+            backdrop-filter: blur(3px);
+            margin-top: 10px;
         }
 
-        /* 隱藏捲軸但保留功能 (美觀用) */
         .card::-webkit-scrollbar { width: 0; }
 
         .title-box {
             background-color: var(--bright-pink);
             color: white;
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 6px 15px;
+            border-radius: 10px;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
-        h1 { font-size: 1.6rem; margin: 0; color: white; }
+        h1 { font-size: 1.3rem; margin: 0; color: white; }
 
-        .info-bar { margin-bottom: 15px; color: var(--bright-pink); font-weight: bold; }
-        .info-total { font-size: 1.1rem; }
+        .info-bar { margin-bottom: 10px; color: var(--bright-pink); font-weight: bold; }
+        .info-total { font-size: 0.95rem; }
 
         .input-group {
             display: flex;
             flex-wrap: wrap; 
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 5px;
+            margin-bottom: 8px;
         }
 
         input, select { 
-            padding: 10px; 
+            padding: 7px; 
             border: 2px solid var(--bright-pink); 
-            border-radius: 10px; 
+            border-radius: 8px; 
             outline: none; 
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             flex: 1; 
-            min-width: 100px; 
+            min-width: 85px; 
         }
 
         button { 
             background-color: var(--bright-pink); 
             color: white; 
             border: none; 
-            padding: 10px 20px; 
-            border-radius: 10px; 
+            padding: 7px 14px; 
+            border-radius: 8px; 
             cursor: pointer; 
             font-weight: bold; 
-            font-size: 1rem; 
+            font-size: 0.9rem; 
         }
 
-        .category-manage { margin-top: 15px; font-size: 0.8rem; }
-        .category-manage input { width: 100px; }
+        .category-manage { margin-top: 8px; font-size: 0.7rem; }
+        .category-manage input { width: 75px; padding: 5px; }
+        .category-manage button { padding: 4px 8px; font-size: 0.7rem; }
 
-        #chartBox { margin-top: 10px; width: 100%; }
+        #chartBox { margin-top: 8px; width: 100%; }
         
         .backup-section {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 1px dashed #eee;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(218, 164, 164, 0.3);
         }
-        .backup-btn { background-color: #aaa; font-size: 0.8rem; padding: 6px 12px; }
+        .backup-btn { background-color: #aaa; font-size: 0.7rem; padding: 4px 8px; }
 
-        .bg-settings { margin-top: 20px; }
-        .bg-btn { background: #eee; color: #888; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.7rem; cursor: pointer; }
+        .bg-settings { margin-top: 12px; }
+        .bg-btn { background: rgba(238, 238, 238, 0.6); color: #444; border: none; padding: 4px 8px; border-radius: 5px; font-size: 0.65rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -116,44 +119,43 @@
             <input type="date" id="recordDate">
             <input type="number" id="amount" placeholder="金額" step="any">
             <select id="categorySelect"></select>
-            <button onclick="addRecord()">新增紀錄</button>
+            <button onclick="addRecord()">新增</button>
         </div>
 
         <div class="category-manage">
             <input type="text" id="newCategoryName" placeholder="新類別">
-            <button onclick="addCategory()">新增</button>
-            <button onclick="deleteCategory()" style="background: #daa4a4;">刪除</button>
+            <button onclick="addCategory()">+類別</button>
+            <button onclick="deleteCategory()" style="background: #daa4a4;">-類別</button>
         </div>
 
-        <hr style="border:0; border-top: 1px solid #eee; margin: 20px 0;">
+        <hr style="border:0; border-top: 1px solid #eee; margin: 12px 0;">
 
         <div>
-            <button onclick="showStats('month')">當月圖表</button>
-            <button onclick="showStats('year')">今年圖表</button>
+            <button onclick="showStats('month')" style="font-size: 0.8rem;">本月圖表</button>
+            <button onclick="showStats('year')" style="font-size: 0.8rem;">今年圖表</button>
         </div>
 
         <div id="chartBox">
-            <div id="summaryLabel" style="font-size:1.1rem; color:var(--bright-pink); font-weight:bold; margin:10px;"></div>
+            <div id="summaryLabel" style="font-size:0.9rem; color:var(--bright-pink); font-weight:bold; margin:8px;"></div>
             <canvas id="myChart"></canvas>
         </div>
 
         <div class="backup-section">
-            <p style="font-size: 0.9rem; color: #bbb; margin-bottom: 5px;">🔒定期備份</p>
             <button class="backup-btn" onclick="exportData()">下載備份</button>
             <button class="backup-btn" onclick="document.getElementById('fileInput').click()">匯入備份</button>
             <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
         </div>
 
         <div class="bg-settings">
-            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景</button>
-            <button class="bg-btn" onclick="clearBg()">重置背景</button>
+            <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換完整背景</button>
+            <button class="bg-btn" onclick="clearBg()">重置</button>
             <input type="file" id="bgInput" style="display:none" accept="image/*" onchange="uploadBg(event)">
         </div>
     </div>
 
     <script>
-        let records = JSON.parse(localStorage.getItem('girl_records_v3')) || [];
-        let categories = JSON.parse(localStorage.getItem('girl_cats_v3')) || ["吃飯", "衣服", "交通"];
+        let records = JSON.parse(localStorage.getItem('girl_records_v4')) || [];
+        let categories = JSON.parse(localStorage.getItem('girl_cats_v4')) || ["吃飯", "衣服", "交通"];
         let myChart = null;
 
         function initHeader() {
@@ -165,7 +167,7 @@
                 return sum;
             }, 0);
             document.getElementById('monthTotalLabel').innerText = `當月總計: $${monthTotal}`;
-            const savedBg = localStorage.getItem('girl_custom_bg');
+            const savedBg = localStorage.getItem('girl_custom_bg_v4');
             if (savedBg) { document.body.style.backgroundImage = `url(${savedBg})`; }
         }
 
@@ -173,13 +175,13 @@
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                localStorage.setItem('girl_custom_bg', e.target.result);
+                localStorage.setItem('girl_custom_bg_v4', e.target.result);
                 document.body.style.backgroundImage = `url(${e.target.result})`;
             };
             reader.readAsDataURL(file);
         }
 
-        function clearBg() { localStorage.removeItem('girl_custom_bg'); location.reload(); }
+        function clearBg() { localStorage.removeItem('girl_custom_bg_v4'); location.reload(); }
 
         function updateCategoryDropdown() {
             const select = document.getElementById('categorySelect'); select.innerHTML = '';
@@ -189,23 +191,23 @@
         function addCategory() {
             const name = document.getElementById('newCategoryName').value.trim();
             if(!name || categories.includes(name)) return;
-            categories.push(name); localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
+            categories.push(name); localStorage.setItem('girl_cats_v4', JSON.stringify(categories));
             updateCategoryDropdown();
         }
 
         function deleteCategory() {
             const selectedCat = document.getElementById('categorySelect').value;
             if(!selectedCat || !confirm(`刪除「${selectedCat}」？`)) return;
-            categories = categories.filter(c => c !== selectedCat); localStorage.setItem('girl_cats_v3', JSON.stringify(categories));
+            categories = categories.filter(c => c !== selectedCat); localStorage.setItem('girl_cats_v4', JSON.stringify(categories));
             updateCategoryDropdown();
         }
 
         function addRecord() {
             const amt = document.getElementById('amount').value; const cat = document.getElementById('categorySelect').value; const date = document.getElementById('recordDate').value;
-            if(!amt || !cat || !date) return alert("請填入資料！");
+            if(!amt || !cat || !date) return alert("填一下金額啦！");
             records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString() });
-            localStorage.setItem('girl_records_v3', JSON.stringify(records));
-            document.getElementById('amount').value = ''; initHeader(); alert("記好囉！✨");
+            localStorage.setItem('girl_records_v4', JSON.stringify(records));
+            document.getElementById('amount').value = ''; initHeader(); alert("記好了💖");
         }
 
         function showStats(type) {
@@ -214,7 +216,7 @@
             const filtered = records.filter(r => { const d = new Date(r.date); return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); });
             let total = 0; const stats = {};
             filtered.forEach(r => { total += r.amt; stats[r.cat] = (stats[r.cat] || 0) + r.amt; });
-            document.getElementById('summaryLabel').innerText = (type === 'month' ? "本月" : "今年") + "支出：$" + total;
+            document.getElementById('summaryLabel').innerText = (type === 'month' ? "本月" : "今年") + "：$" + total;
             if(myChart) myChart.destroy();
             myChart = new Chart(document.getElementById('myChart'), { type: 'pie', data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] }] } });
         }
@@ -227,7 +229,7 @@
         function importData(e) {
             const file = e.target.files[0]; if(!file) return;
             const reader = new FileReader();
-            reader.onload = function(evt) { const imported = JSON.parse(evt.target.result); records = imported.records || []; categories = imported.categories || []; localStorage.setItem('girl_records_v3', JSON.stringify(records)); localStorage.setItem('girl_cats_v3', JSON.stringify(categories)); location.reload(); };
+            reader.onload = function(evt) { const imported = JSON.parse(evt.target.result); records = imported.records || []; categories = imported.categories || []; localStorage.setItem('girl_records_v4', JSON.stringify(records)); localStorage.setItem('girl_cats_v4', JSON.stringify(categories)); location.reload(); };
             reader.readAsText(file);
         }
 
