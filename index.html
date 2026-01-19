@@ -44,14 +44,13 @@
 
         .card::-webkit-scrollbar { width: 0; }
 
-        /* 標題粉紅框：上方增加了 margin-top 來空出一行 */
         .title-box {
             background-color: var(--bright-pink);
             color: white;
             padding: 6px 15px;
             border-radius: 10px;
             display: inline-block;
-            margin-top: 20px; /* 這裡增加空間 */
+            margin-top: 20px; 
             margin-bottom: 12px;
         }
         h1 { font-size: 1.3rem; margin: 0; color: white; }
@@ -94,6 +93,24 @@
 
         #chartBox { margin-top: 8px; width: 100%; }
         
+        /* 新增：明細列表樣式 */
+        .detail-list {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 0.8rem;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .detail-list th {
+            border-bottom: 1px solid var(--bright-pink);
+            padding: 5px;
+            color: var(--bright-pink);
+        }
+        .detail-list td {
+            padding: 5px;
+            border-bottom: 1px solid rgba(218, 164, 164, 0.2);
+        }
+
         .backup-section {
             margin-top: 15px;
             padding-top: 10px;
@@ -139,6 +156,16 @@
         <div id="chartBox">
             <div id="summaryLabel" style="font-size:0.9rem; color:var(--bright-pink); font-weight:bold; margin:8px;"></div>
             <canvas id="myChart"></canvas>
+            <table class="detail-list" id="detailTable">
+                <thead>
+                    <tr>
+                        <th>日期</th>
+                        <th>類別</th>
+                        <th>金額</th>
+                    </tr>
+                </thead>
+                <tbody id="detailBody"></tbody>
+            </table>
         </div>
 
         <div class="backup-section">
@@ -214,12 +241,47 @@
         function showStats(type) {
             document.getElementById('chartBox').style.display = 'block';
             const now = new Date();
-            const filtered = records.filter(r => { const d = new Date(r.date); return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); });
-            let total = 0; const stats = {};
-            filtered.forEach(r => { total += r.amt; stats[r.cat] = (stats[r.cat] || 0) + r.amt; });
+            const filtered = records.filter(r => { 
+                const d = new Date(r.date); 
+                return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); 
+            });
+
+            // 按日期排序 (由新到舊)
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            let total = 0; 
+            const stats = {};
+            const tbody = document.getElementById('detailBody');
+            tbody.innerHTML = ''; // 清空舊明細
+
+            filtered.forEach(r => { 
+                total += r.amt; 
+                stats[r.cat] = (stats[r.cat] || 0) + r.amt; 
+
+                // 新增表格列
+                const row = document.createElement('tr');
+                const d = new Date(r.date);
+                row.innerHTML = `
+                    <td>${d.getMonth()+1}/${d.getDate()}</td>
+                    <td>${r.cat}</td>
+                    <td>$${r.amt}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
             document.getElementById('summaryLabel').innerText = (type === 'month' ? "本月" : "今年") + "：$" + total;
+            
             if(myChart) myChart.destroy();
-            myChart = new Chart(document.getElementById('myChart'), { type: 'pie', data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] }] } });
+            myChart = new Chart(document.getElementById('myChart'), { 
+                type: 'pie', 
+                data: { 
+                    labels: Object.keys(stats), 
+                    datasets: [{ 
+                        data: Object.values(stats), 
+                        backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] 
+                    }] 
+                } 
+            });
         }
 
         function exportData() {
