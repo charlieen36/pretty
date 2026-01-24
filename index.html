@@ -7,176 +7,64 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bright-pink: #daa4a4; --hover-pink: #daa4a4; --text-gray: #444; }
-        
-        body { 
-            background-color: #FFFFFF; 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: "Microsoft JhengHei", sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: flex-start; 
-            padding: 20px; 
-            color: var(--text-gray); 
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .card { 
-            background: rgba(255, 255, 255, 0.7); 
-            padding: 20px 15px; 
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            width: 92%; 
-            max-width: 450px; 
-            max-height: 52vh; 
-            overflow-y: auto;
-            box-sizing: border-box;
-            text-align: center;
-            backdrop-filter: blur(3px);
-            margin-top: 15px;
-        }
-
+        body { background-color: #FFFFFF; background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; font-family: "Microsoft JhengHei", sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px; color: var(--text-gray); margin: 0; height: 100vh; overflow: hidden; }
+        .card { background: rgba(255, 255, 255, 0.7); padding: 20px 15px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 92%; max-width: 450px; max-height: 52vh; overflow-y: auto; box-sizing: border-box; text-align: center; backdrop-filter: blur(3px); margin-top: 15px; }
         .card::-webkit-scrollbar { width: 0; }
-
-        .title-box {
-            background-color: var(--bright-pink);
-            color: white;
-            padding: 6px 15px;
-            border-radius: 10px;
-            display: inline-block;
-            margin-top: 20px; 
-            margin-bottom: 12px;
-        }
+        .title-box { background-color: var(--bright-pink); color: white; padding: 6px 15px; border-radius: 10px; display: inline-block; margin-top: 20px; margin-bottom: 12px; }
         h1 { font-size: 1.3rem; margin: 0; color: white; }
-
         .info-bar { margin-bottom: 10px; color: var(--bright-pink); font-weight: bold; }
         .info-total { font-size: 0.95rem; }
-
-        .input-group {
-            display: flex;
-            flex-wrap: wrap; 
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 8px;
-        }
-
-        input, select { 
-            padding: 7px; 
-            border: 2px solid var(--bright-pink); 
-            border-radius: 8px; 
-            outline: none; 
-            font-size: 0.85rem;
-            flex: 1; 
-            min-width: 85px; 
-        }
-
-        button { 
-            background-color: var(--bright-pink); 
-            color: white; 
-            border: none; 
-            padding: 7px 14px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 0.9rem; 
-        }
-
+        .input-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-bottom: 8px; }
+        input, select { padding: 7px; border: 2px solid var(--bright-pink); border-radius: 8px; outline: none; font-size: 0.85rem; flex: 1; min-width: 85px; }
+        button { background-color: var(--bright-pink); color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
         .category-manage { margin-top: 8px; font-size: 0.7rem; }
         .category-manage input { width: 75px; padding: 5px; }
         .category-manage button { padding: 4px 8px; font-size: 0.7rem; }
-
         #chartBox { margin-top: 8px; width: 100%; }
-        
-        .detail-list {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 0.75rem;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        .detail-list th {
-            border-bottom: 1px solid var(--bright-pink);
-            padding: 5px;
-            color: var(--bright-pink);
-        }
-        .detail-list td {
-            padding: 5px;
-            border-bottom: 1px solid rgba(218, 164, 164, 0.2);
-            vertical-align: middle;
-        }
+        .detail-list { margin-top: 15px; text-align: left; font-size: 0.75rem; border-collapse: collapse; width: 100%; }
+        .detail-list th { border-bottom: 1px solid var(--bright-pink); padding: 5px; color: var(--bright-pink); }
+        .detail-list td { padding: 5px; border-bottom: 1px solid rgba(218, 164, 164, 0.2); vertical-align: middle; }
         .action-btn { padding: 2px 5px; font-size: 0.65rem; margin-left: 2px; }
         .edit-input { padding: 2px; border: 1px solid var(--bright-pink); border-radius: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box; }
-
-        .backup-section {
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(218, 164, 164, 0.3);
-        }
+        .backup-section { margin-top: 15px; padding-top: 10px; border-top: 1px dashed rgba(218, 164, 164, 0.3); }
         .backup-btn { background-color: #aaa; font-size: 0.7rem; padding: 4px 8px; }
-
         .bg-settings { margin-top: 12px; }
         .bg-btn { background: rgba(238, 238, 238, 0.6); color: #444; border: none; padding: 4px 8px; border-radius: 5px; font-size: 0.65rem; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="card">
-        <div class="title-box">
-            <h1>美少女記帳本👸🏻</h1>
-        </div>
-
-        <div class="info-bar">
-            <span id="monthTotalLabel" class="info-total">當月總計: $0</span>
-        </div>
-
+        <div class="title-box"><h1>美少女記帳本👸🏻</h1></div>
+        <div class="info-bar"><span id="monthTotalLabel" class="info-total">當月總計: $0</span></div>
         <div class="input-group">
             <input type="date" id="recordDate">
             <input type="number" id="amount" placeholder="金額" step="any">
             <select id="categorySelect"></select>
             <button onclick="addRecord()">新增</button>
         </div>
-
         <div class="category-manage">
             <input type="text" id="newCategoryName" placeholder="新類別">
             <button onclick="addCategory()">+類別</button>
             <button onclick="deleteCategory()" style="background: #daa4a4;">-類別</button>
         </div>
-
         <hr style="border:0; border-top: 1px solid #eee; margin: 12px 0;">
-
         <div>
             <button onclick="showStats('month')" style="font-size: 0.8rem;">本月圖表</button>
             <button onclick="showStats('year')" style="font-size: 0.8rem;">今年圖表</button>
         </div>
-
         <div id="chartBox">
             <div id="summaryLabel" style="font-size:0.9rem; color:var(--bright-pink); font-weight:bold; margin:8px;"></div>
             <canvas id="myChart"></canvas>
-            <table class="detail-list" id="detailTable">
-                <thead>
-                    <tr>
-                        <th style="width: 20%;">日期</th>
-                        <th style="width: 25%;">類別</th>
-                        <th style="width: 20%;">金額</th>
-                        <th style="width: 35%;">操作</th>
-                    </tr>
-                </thead>
+            <table class="detail-list">
+                <thead><tr><th style="width: 20%;">日期</th><th style="width: 25%;">類別</th><th style="width: 20%;">金額</th><th style="width: 35%;">操作</th></tr></thead>
                 <tbody id="detailBody"></tbody>
             </table>
         </div>
-
         <div class="backup-section">
             <button class="backup-btn" onclick="exportData()">下載備份</button>
             <button class="backup-btn" onclick="document.getElementById('fileInput').click()">匯入備份</button>
             <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
         </div>
-
         <div class="bg-settings">
             <button class="bg-btn" onclick="document.getElementById('bgInput').click()">🖼️ 更換背景</button>
             <button class="bg-btn" onclick="clearBg()">重置</button>
@@ -188,105 +76,79 @@
         let records = JSON.parse(localStorage.getItem('girl_records_v4')) || [];
         let categories = JSON.parse(localStorage.getItem('girl_cats_v4')) || ["吃飯", "衣服", "交通"];
         let myChart = null;
-        let currentType = 'month'; // 記錄當前顯示是月還是年
+        let currentType = 'month';
+
+        // 強制修復舊紀錄沒有 ID 的問題
+        records = records.map(r => r.id ? r : { ...r, id: Math.random() + Date.now() });
 
         function initHeader() {
             const now = new Date();
             document.getElementById('recordDate').valueAsDate = now;
             const monthTotal = records.reduce((sum, r) => {
                 const rDate = new Date(r.date);
-                if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) return sum + r.amt;
-                return sum;
+                return (rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) ? sum + r.amt : sum;
             }, 0);
             document.getElementById('monthTotalLabel').innerText = `當月總計: $${monthTotal}`;
             const savedBg = localStorage.getItem('girl_custom_bg_v4');
             if (savedBg) { document.body.style.backgroundImage = `url(${savedBg})`; }
         }
 
-        function uploadBg(event) {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                localStorage.setItem('girl_custom_bg_v4', e.target.result);
-                document.body.style.backgroundImage = `url(${e.target.result})`;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function clearBg() { localStorage.removeItem('girl_custom_bg_v4'); location.reload(); }
-
-        function updateCategoryDropdown() {
-            const select = document.getElementById('categorySelect'); select.innerHTML = '';
-            categories.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; select.appendChild(opt); });
-        }
-
-        function addCategory() {
-            const name = document.getElementById('newCategoryName').value.trim();
-            if(!name || categories.includes(name)) return;
-            categories.push(name); localStorage.setItem('girl_cats_v4', JSON.stringify(categories));
-            updateCategoryDropdown();
-        }
-
-        function deleteCategory() {
-            const selectedCat = document.getElementById('categorySelect').value;
-            if(!selectedCat || !confirm(`刪除「${selectedCat}」？`)) return;
-            categories = categories.filter(c => c !== selectedCat); localStorage.setItem('girl_cats_v4', JSON.stringify(categories));
-            updateCategoryDropdown();
-        }
-
         function addRecord() {
-            const amt = document.getElementById('amount').value; const cat = document.getElementById('categorySelect').value; const date = document.getElementById('recordDate').value;
+            const amt = document.getElementById('amount').value;
+            const cat = document.getElementById('categorySelect').value;
+            const date = document.getElementById('recordDate').value;
             if(!amt || !cat || !date) return alert("填一下金額啦！");
-            records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString(), id: Date.now() });
-            localStorage.setItem('girl_records_v4', JSON.stringify(records));
-            document.getElementById('amount').value = ''; initHeader(); 
-            if(document.getElementById('chartBox').style.display === 'block') showStats(currentType);
+            // 確保每一筆都有唯一的 id
+            records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString(), id: Date.now() + Math.random() });
+            saveAndRefresh();
+            document.getElementById('amount').value = '';
             alert("記好了💖");
         }
 
         function deleteRecord(id) {
-            if(!confirm("確定要刪除這筆紀錄嗎？")) return;
+            if(!confirm("確定要刪除這筆嗎？")) return;
             records = records.filter(r => r.id !== id);
-            localStorage.setItem('girl_records_v4', JSON.stringify(records));
-            initHeader();
-            showStats(currentType);
+            saveAndRefresh();
         }
 
         function editRecord(id) {
-            const row = document.getElementById(`row-${id}`);
+            const tbody = document.getElementById('detailBody');
             const record = records.find(r => r.id === id);
+            const row = document.getElementById(`row-${id}`);
             const d = new Date(record.date);
             const dateStr = d.toISOString().split('T')[0];
-
-            let catOptions = categories.map(c => `<option value="${c}" ${c === record.cat ? 'selected' : ''}>${c}</option>`).join('');
+            let opts = categories.map(c => `<option value="${c}" ${c === record.cat ? 'selected' : ''}>${c}</option>`).join('');
 
             row.innerHTML = `
-                <td><input type="date" class="edit-input" id="edit-date-${id}" value="${dateStr}"></td>
-                <td><select class="edit-input" id="edit-cat-${id}">${catOptions}</select></td>
-                <td><input type="number" class="edit-input" id="edit-amt-${id}" value="${record.amt}"></td>
+                <td><input type="date" class="edit-input" id="ed-${id}" value="${dateStr}"></td>
+                <td><select class="edit-input" id="ec-${id}">${opts}</select></td>
+                <td><input type="number" class="edit-input" id="ea-${id}" value="${record.amt}"></td>
                 <td>
-                    <button class="action-btn" onclick="saveRecord(${id})">儲存</button>
+                    <button class="action-btn" onclick="saveEdit(${id})">儲存</button>
                     <button class="action-btn" style="background:#aaa" onclick="showStats(currentType)">取消</button>
                 </td>
             `;
         }
 
-        function saveRecord(id) {
-            const newDate = document.getElementById(`edit-date-${id}`).value;
-            const newCat = document.getElementById(`edit-cat-${id}`).value;
-            const newAmt = document.getElementById(`edit-amt-${id}`).value;
+        function saveEdit(id) {
+            const nDate = document.getElementById(`ed-${id}`).value;
+            const nCat = document.getElementById(`ec-${id}`).value;
+            const nAmt = document.getElementById(`ea-${id}`).value;
+            if(!nDate || !nCat || !nAmt) return alert("不能空著喔");
 
-            if(!newDate || !newCat || !newAmt) return alert("請填寫完整內容");
+            const idx = records.findIndex(r => r.id === id);
+            records[idx].date = new Date(nDate).toISOString();
+            records[idx].cat = nCat;
+            records[idx].amt = parseFloat(nAmt);
 
-            const index = records.findIndex(r => r.id === id);
-            records[index].date = new Date(newDate).toISOString();
-            records[index].cat = newCat;
-            records[index].amt = parseFloat(newAmt);
+            saveAndRefresh();
+            alert("改好囉✨");
+        }
 
+        function saveAndRefresh() {
             localStorage.setItem('girl_records_v4', JSON.stringify(records));
             initHeader();
-            showStats(currentType);
-            alert("修改成功✨");
+            if(document.getElementById('chartBox').style.display === 'block') showStats(currentType);
         }
 
         function showStats(type) {
@@ -296,23 +158,18 @@
             const filtered = records.filter(r => { 
                 const d = new Date(r.date); 
                 return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); 
-            });
+            }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            let total = 0; 
-            const stats = {};
+            let total = 0; const stats = {};
             const tbody = document.getElementById('detailBody');
             tbody.innerHTML = '';
 
             filtered.forEach(r => { 
-                total += r.amt; 
-                stats[r.cat] = (stats[r.cat] || 0) + r.amt; 
-
-                const row = document.createElement('tr');
-                row.id = `row-${r.id}`;
+                total += r.amt; stats[r.cat] = (stats[r.cat] || 0) + r.amt; 
+                const tr = document.createElement('tr');
+                tr.id = `row-${r.id}`;
                 const d = new Date(r.date);
-                row.innerHTML = `
+                tr.innerHTML = `
                     <td>${d.getMonth()+1}/${d.getDate()}</td>
                     <td>${r.cat}</td>
                     <td>$${r.amt}</td>
@@ -321,35 +178,21 @@
                         <button class="action-btn" style="background:#daa4a4" onclick="deleteRecord(${r.id})">刪除</button>
                     </td>
                 `;
-                tbody.appendChild(row);
+                tbody.appendChild(tr);
             });
 
             document.getElementById('summaryLabel').innerText = (type === 'month' ? "本月" : "今年") + "：$" + total;
-            
             if(myChart) myChart.destroy();
-            myChart = new Chart(document.getElementById('myChart'), { 
-                type: 'pie', 
-                data: { 
-                    labels: Object.keys(stats), 
-                    datasets: [{ 
-                        data: Object.values(stats), 
-                        backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] 
-                    }] 
-                } 
-            });
+            myChart = new Chart(document.getElementById('myChart'), { type: 'pie', data: { labels: Object.keys(stats), datasets: [{ data: Object.values(stats), backgroundColor: ['#FFB7C5', '#FFD1DC', '#FFC0CB', '#FF9EAF', '#FF85A2'] }] } });
         }
 
-        function exportData() {
-            const data = { records, categories }; const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
-            const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = "備份.json"; a.click();
-        }
-
-        function importData(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(evt) { const imported = JSON.parse(evt.target.result); records = imported.records || []; categories = imported.categories || []; localStorage.setItem('girl_records_v4', JSON.stringify(records)); localStorage.setItem('girl_cats_v4', JSON.stringify(categories)); location.reload(); };
-            reader.readAsText(file);
-        }
+        function uploadBg(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { localStorage.setItem('girl_custom_bg_v4', ev.target.result); document.body.style.backgroundImage = `url(${ev.target.result})`; }; r.readAsDataURL(f); }
+        function clearBg() { localStorage.removeItem('girl_custom_bg_v4'); location.reload(); }
+        function updateCategoryDropdown() { const s = document.getElementById('categorySelect'); s.innerHTML = ''; categories.forEach(c => { const o = document.createElement('option'); o.value = c; o.innerText = c; s.appendChild(o); }); }
+        function addCategory() { const n = document.getElementById('newCategoryName').value.trim(); if(!n || categories.includes(n)) return; categories.push(n); localStorage.setItem('girl_cats_v4', JSON.stringify(categories)); updateCategoryDropdown(); }
+        function deleteCategory() { const s = document.getElementById('categorySelect').value; if(!s || !confirm(`刪除「${s}」？`)) return; categories = categories.filter(c => c !== s); localStorage.setItem('girl_cats_v4', JSON.stringify(categories)); updateCategoryDropdown(); }
+        function exportData() { const blob = new Blob([JSON.stringify({records, categories})], {type: "application/json"}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "備份.json"; a.click(); }
+        function importData(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { const d = JSON.parse(ev.target.result); records = d.records; categories = d.categories; saveAndRefresh(); location.reload(); }; r.readAsText(f); }
 
         updateCategoryDropdown(); initHeader();
     </script>
