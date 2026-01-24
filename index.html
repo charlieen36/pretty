@@ -93,11 +93,10 @@
 
         #chartBox { margin-top: 8px; width: 100%; }
         
-        /* 新增：明細列表樣式 */
         .detail-list {
             margin-top: 15px;
             text-align: left;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             border-collapse: collapse;
             width: 100%;
         }
@@ -109,7 +108,10 @@
         .detail-list td {
             padding: 5px;
             border-bottom: 1px solid rgba(218, 164, 164, 0.2);
+            vertical-align: middle;
         }
+        .action-btn { padding: 2px 5px; font-size: 0.65rem; margin-left: 2px; }
+        .edit-input { padding: 2px; border: 1px solid var(--bright-pink); border-radius: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box; }
 
         .backup-section {
             margin-top: 15px;
@@ -159,9 +161,10 @@
             <table class="detail-list" id="detailTable">
                 <thead>
                     <tr>
-                        <th>日期</th>
-                        <th>類別</th>
-                        <th>金額</th>
+                        <th style="width: 20%;">日期</th>
+                        <th style="width: 25%;">類別</th>
+                        <th style="width: 20%;">金額</th>
+                        <th style="width: 35%;">操作</th>
                     </tr>
                 </thead>
                 <tbody id="detailBody"></tbody>
@@ -185,6 +188,7 @@
         let records = JSON.parse(localStorage.getItem('girl_records_v4')) || [];
         let categories = JSON.parse(localStorage.getItem('girl_cats_v4')) || ["吃飯", "衣服", "交通"];
         let myChart = null;
+        let currentType = 'month'; // 記錄當前顯示是月還是年
 
         function initHeader() {
             const now = new Date();
@@ -233,12 +237,60 @@
         function addRecord() {
             const amt = document.getElementById('amount').value; const cat = document.getElementById('categorySelect').value; const date = document.getElementById('recordDate').value;
             if(!amt || !cat || !date) return alert("填一下金額啦！");
-            records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString() });
+            records.push({ amt: parseFloat(amt), cat: cat, date: new Date(date).toISOString(), id: Date.now() });
             localStorage.setItem('girl_records_v4', JSON.stringify(records));
-            document.getElementById('amount').value = ''; initHeader(); alert("記好了💖");
+            document.getElementById('amount').value = ''; initHeader(); 
+            if(document.getElementById('chartBox').style.display === 'block') showStats(currentType);
+            alert("記好了💖");
+        }
+
+        function deleteRecord(id) {
+            if(!confirm("確定要刪除這筆紀錄嗎？")) return;
+            records = records.filter(r => r.id !== id);
+            localStorage.setItem('girl_records_v4', JSON.stringify(records));
+            initHeader();
+            showStats(currentType);
+        }
+
+        function editRecord(id) {
+            const row = document.getElementById(`row-${id}`);
+            const record = records.find(r => r.id === id);
+            const d = new Date(record.date);
+            const dateStr = d.toISOString().split('T')[0];
+
+            let catOptions = categories.map(c => `<option value="${c}" ${c === record.cat ? 'selected' : ''}>${c}</option>`).join('');
+
+            row.innerHTML = `
+                <td><input type="date" class="edit-input" id="edit-date-${id}" value="${dateStr}"></td>
+                <td><select class="edit-input" id="edit-cat-${id}">${catOptions}</select></td>
+                <td><input type="number" class="edit-input" id="edit-amt-${id}" value="${record.amt}"></td>
+                <td>
+                    <button class="action-btn" onclick="saveRecord(${id})">儲存</button>
+                    <button class="action-btn" style="background:#aaa" onclick="showStats(currentType)">取消</button>
+                </td>
+            `;
+        }
+
+        function saveRecord(id) {
+            const newDate = document.getElementById(`edit-date-${id}`).value;
+            const newCat = document.getElementById(`edit-cat-${id}`).value;
+            const newAmt = document.getElementById(`edit-amt-${id}`).value;
+
+            if(!newDate || !newCat || !newAmt) return alert("請填寫完整內容");
+
+            const index = records.findIndex(r => r.id === id);
+            records[index].date = new Date(newDate).toISOString();
+            records[index].cat = newCat;
+            records[index].amt = parseFloat(newAmt);
+
+            localStorage.setItem('girl_records_v4', JSON.stringify(records));
+            initHeader();
+            showStats(currentType);
+            alert("修改成功✨");
         }
 
         function showStats(type) {
+            currentType = type;
             document.getElementById('chartBox').style.display = 'block';
             const now = new Date();
             const filtered = records.filter(r => { 
@@ -246,25 +298,28 @@
                 return type === 'month' ? (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) : (d.getFullYear() === now.getFullYear()); 
             });
 
-            // 按日期排序 (由新到舊)
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             let total = 0; 
             const stats = {};
             const tbody = document.getElementById('detailBody');
-            tbody.innerHTML = ''; // 清空舊明細
+            tbody.innerHTML = '';
 
             filtered.forEach(r => { 
                 total += r.amt; 
                 stats[r.cat] = (stats[r.cat] || 0) + r.amt; 
 
-                // 新增表格列
                 const row = document.createElement('tr');
+                row.id = `row-${r.id}`;
                 const d = new Date(r.date);
                 row.innerHTML = `
                     <td>${d.getMonth()+1}/${d.getDate()}</td>
                     <td>${r.cat}</td>
                     <td>$${r.amt}</td>
+                    <td>
+                        <button class="action-btn" onclick="editRecord(${r.id})">編輯</button>
+                        <button class="action-btn" style="background:#daa4a4" onclick="deleteRecord(${r.id})">刪除</button>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
